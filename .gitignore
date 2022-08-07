@@ -1,0 +1,3 @@
+# List of files which should be ignored by git.
+config.py
+credentials.py
