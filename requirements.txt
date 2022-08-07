@@ -1,0 +1,7 @@
+# This file may be used to create an environment using:
+# $ conda create --name <env> --file <this file>
+# platform: win-64
+flask=2.0.3=pyhd3eb1b0_0
+python=3.10.5=hcf16a7b_0_cpython
+requests=2.27.1=pyhd3eb1b0_0
+# python-telegram-bot=20.0a2=pypi_0 <- can't be installed via conda
