@@ -1,4 +1,5 @@
 # BGG Telegram Bot
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/szaroket/bgg-telegram-bot/main.svg)](https://results.pre-commit.ci/latest/github/szaroket/bgg-telegram-bot/main)
 
 A simple Telegram bot for getting information about board games using Board Game Geek API.
 
