@@ -16,7 +16,7 @@ The whole environment was set up with [conda](https://docs.conda.io/en/latest/) 
 
 ### Python
 
-This bot was built with `Python 3.10` and `python-telegram-bot`. 
+This bot was built with `Python 3.10` and `python-telegram-bot`.
 
 To run this project, you have to install python and other necessary libraries.
 
