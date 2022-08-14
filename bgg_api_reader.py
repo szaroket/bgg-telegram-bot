@@ -2,7 +2,7 @@ import requests
 import xmltodict
 
 
-def get_all_gameid(response: dict) -> dict:
+def get_all_gameid(response: dict) -> list:
     list_of_gameid = []
     for game in response["boardgames"]["boardgame"]:
         list_of_gameid.append(game["@objectid"])
