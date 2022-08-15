@@ -23,24 +23,30 @@ def get_gameid_from_api(game_name: str) -> list:
     return get_all_gameid(dict_searched_gamesid)
 
 
+# separate function to get board game name
+# API can return name in dict or list of dicts
+def get_board_game_name(list_of_names) -> str:
+    if type(list_of_names) is dict and "@primary" in list_of_names.keys():
+        return list_of_names["#text"]
+
+    for name in list_of_names:
+        if type(name) is dict and "@primary" in name.keys():
+            return name["#text"]
+
+
 def create_board_game_object(board_game_data) -> object:
     year_published = board_game_data["yearpublished"]
     description = board_game_data["description"]
     image = board_game_data["image"]
-    game_name = None
-    for name in board_game_data["name"]:
-        if type(name) is dict and "@primary" in name.keys():
-            game_name = name["#text"]
-    return BoardGame(game_name, year_published, description, image)
+    name = get_board_game_name(board_game_data["name"])
+    return BoardGame(name, year_published, description, image)
 
 
 def get_list_of_board_games(gameid_list: list) -> list:
     list_of_games = []
     for gameid in gameid_list:
-        print(gameid)
         response = requests.get("https://boardgamegeek.com/xmlapi/boardgame/" + gameid)
         dict_searched_games = xmltodict.parse(response.content)
-        print(dict_searched_games)
         list_of_games.append(
             create_board_game_object(dict_searched_games["boardgames"]["boardgame"])
         )
@@ -48,4 +54,4 @@ def get_list_of_board_games(gameid_list: list) -> list:
 
 
 list_id = get_gameid_from_api("Everdell")
-get_list_of_board_games(list_id)
+games_list = get_list_of_board_games(list_id)
