@@ -3,11 +3,11 @@ import xmltodict
 
 
 class BoardGame:
-    def __init__(self, name, year_published, description, image):
+    def __init__(self, name, year_published, description):
         self.name = name
         self.year_published = year_published
         self.description = description
-        self.image = image
+        # self.image = image
 
 
 def get_all_gameid(response: dict) -> list:
@@ -37,12 +37,13 @@ def get_board_game_name(list_of_names) -> str:
 def create_board_game_object(board_game_data) -> object:
     year_published = board_game_data["yearpublished"]
     description = board_game_data["description"]
-    image = board_game_data["image"]
+    # image = board_game_data["image"]
     name = get_board_game_name(board_game_data["name"])
-    return BoardGame(name, year_published, description, image)
+    return BoardGame(name, year_published, description)
 
 
-def get_list_of_board_games(gameid_list: list) -> list:
+def get_list_of_board_games(game_name: str) -> list:
+    gameid_list = get_gameid_from_api(game_name)
     list_of_games = []
     for gameid in gameid_list:
         response = requests.get("https://boardgamegeek.com/xmlapi/boardgame/" + gameid)
@@ -51,7 +52,3 @@ def get_list_of_board_games(gameid_list: list) -> list:
             create_board_game_object(dict_searched_games["boardgames"]["boardgame"])
         )
     return list_of_games
-
-
-list_id = get_gameid_from_api("Everdell")
-games_list = get_list_of_board_games(list_id)

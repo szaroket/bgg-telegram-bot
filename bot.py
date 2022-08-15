@@ -1,30 +1,64 @@
 import config
-from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
+import bgg_api_reader
+from telegram import Update, InlineQueryResultArticle, InputTextMessageContent
+from telegram.ext import (
+    ApplicationBuilder,
+    ContextTypes,
+    CommandHandler,
+    InlineQueryHandler,
+)
+from telegram.constants import ParseMode
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text="Hello! I'm BGG Telegram Bot. What game are you looking for?",
     )
 
 
-async def search_game(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # todo: add logic for searching board games using BGG API
-    print(update.message.text)
-    await update.message.reply_text(text=f"Here are results for {update.message.text}")
+# for handling inline search i.e. @botusername <query>
+async def inline_query(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, answerCallbackQuery=None
+) -> None:
+    query = update.inline_query.query
+
+    if query == "":
+        return
+
+    list_of_games = bgg_api_reader.get_list_of_board_games(query)
+
+    results = []
+    for game in list_of_games:
+        print(f"User's query: {query}")
+        print(game.name)
+        results.append(
+            InlineQueryResultArticle(
+                id=game.name,
+                title=f"{game.name} ({game.year_published})",
+                input_message_content=InputTextMessageContent(
+                    f"<b>{game.name} ({game.year_published})</b>",
+                    parse_mode=ParseMode.HTML,
+                ),
+            )
+        )
+
+    await update.inline_query.answer(results)
 
 
-if __name__ == "__main__":
+def main() -> None:
     application = ApplicationBuilder().token(config.bot_token).build()
 
-    #  Handling bot commands
+    #  Handling Bot commands
     start_handler = CommandHandler(["hello", "start"], start)
-    search_handler = CommandHandler("search", search_game)
-
     application.add_handler(start_handler)
-    application.add_handler(search_handler)
+
+    # Handling searching board games (inline bot)
+    application.add_handler(InlineQueryHandler(inline_query))
 
     # Method for initializing and starting the app
     application.run_polling()
+
+
+if __name__ == "__main__":
+    main()
